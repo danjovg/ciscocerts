@@ -1,0 +1,75 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Registro{% endblock %}</title>
+  <style>
+    html,body{
+      background:#030a1b; color:#e5e7eb;
+      font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+      margin:0
+    }
+    a{color:#22d3ee;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1100px;margin:0 auto;padding:1.25rem}
+    .card{background:#111827;border-radius:14px;padding:1rem}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:.7rem;border-bottom:1px solid #1f2937}
+    .table th{color:#9ca3af;text-align:left;font-weight:600}
+    .site-header{display:flex;align-items:center;gap:1rem;background:#0c1725;border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem}
+    .site-header img{width:56px;height:56px;object-fit:contain;border-radius:8px;background:#fff}
+    .site-header h1{font-size:1.35rem;margin:0}
+    .site-header small{display:block;color:#9ca3af}
+    .note{background:#a10000;color:#ffd7ba;border:1px solid #7c3a1d;border-radius:10px;padding:.6rem .8rem;margin-top:.6rem}
+    .site-footer{color:#9ca3af;margin-top:1.25rem;text-align:center}
+
+    /* Toggle */
+    .toggle-wrap{display:flex;align-items:center;gap:.65rem}
+    .toggle-label{font-size:.9rem;color:#9ca3af}
+    .switch{position:relative;width:90px;height:40px;background:#142944;border-radius:999px;cursor:pointer;display:inline-block}
+    .switch input{display:none}
+    .knob{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff;transition:transform .25s ease}
+    .switch .opt{position:absolute;top:50%;transform:translateY(-50%);font-size:.78rem;color:#cbd5e1;transition:opacity .2s ease}
+    .switch .opt-left{left:12px}   /* Ape */
+    .switch .opt-right{right:12px} /* Nom */
+    .switch input:not(:checked) ~ .opt-left{opacity:1}
+    .switch input:not(:checked) ~ .opt-right{opacity:.35}
+    .switch input:checked ~ .opt-left{opacity:.35}
+    .switch input:checked ~ .opt-right{opacity:1}
+    .switch input:checked ~ .knob{transform:translateX(50px)}
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="site-header">
+      <!-- Ajusta la ruta si tu PNG está en otra carpeta -->
+      <img src="{% static 'branding/logo_colegio.png' %}" alt="Logo del colegio">
+      <div>
+        <h1>Certificados Cisco</h1>
+        <small>Evaluación de <strong>Reparación y Soporte</strong> y <strong>Producción de Contenidos Digitales</strong></small>
+      </div>
+    </header>
+
+    <div class="note">
+      <center>
+        <strong>Recordatorio:</strong> deben elaborar un <em>glosario</em> para complementar el curso de Producción de Contenidos.
+      </center>
+    </div>
+
+    {% block content %}{% endblock %}
+    <div class="note">
+      <center>
+        <strong>CERTIFICACIONES REQUERIDAS:</strong> Introducción a Ciberseguridad y Conceptos Básicos de Hardware de Computadora
+      </center>
+    </div>
+    <footer class="site-footer">
+      Mostramos solo información académica autorizada. © 2025 Colegio Evangélico Mixto "Amigos" · Todos los derechos reservados por Rubikon S.A.
+    </footer>
+  </div>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

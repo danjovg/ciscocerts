@@ -1,0 +1,77 @@
+{% extends 'registry/base.html' %}
+{% block title %}{{ student.full_name }} · Certificados{% endblock %}
+{% block content %}
+<div style="margin:.6rem 0 .2rem">
+  <a href="{% url 'registry:student-list' %}"
+     onclick="if (window.history.length > 1) { history.back(); return false; }"
+     style="display:inline-block;padding:.55rem .85rem;border-radius:10px;border:1px solid #1f2937;background:#0b1020;color:#e5e7eb">
+    ← Volver al listado
+  </a>
+</div>
+
+  <h2 style="margin-top:0">{{ student.full_name }}</h2>
+  <div style="color:#9ca3af;margin-bottom:.3rem">{{ student.cohort }}</div>
+
+  {% if has_all %}
+    <p>✅ Certificaciones requeridas y verificadas.</p>
+  {% else %}
+    <div class="warning">⚠️ Aún no ha reportado todas las certificaciones requeridas.</div>
+  {% endif %}
+
+  <h3 style="margin-top:1rem">Certificaciones requeridas</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:.5rem">
+    {% for row in required_rows %}
+      <div class="card">
+        <h3 style="margin:.2rem 0">{{ row.name }}</h3>
+
+        {% if row.cert and row.cert.badge_src %}
+          <img src="{{ row.cert.badge_src }}" alt="Badge {{ row.name }}" style="max-width:160px;border-radius:10px"/>
+        {% elif row.course_img %}
+          <img src="{{ row.course_img }}" alt="Imagen {{ row.name }}" style="max-width:160px;border-radius:10px"/>
+        {% elif row.fallback %}
+          <img src="{{ row.fallback }}" alt="Badge {{ row.name }} estático" style="max-width:160px;border-radius:10px;opacity:.9"/>
+        {% endif %}
+
+        <p style="margin:.4rem 0">
+          Fecha:
+          {% if row.cert and row.cert.issued_at %}{{ row.cert.issued_at|date:"Y-m-d" }}{% else %}—{% endif %}
+        </p>
+
+        {% if row.cert and row.cert.credly_url %}
+          <p style="margin:.4rem 0"><a href="{{ row.cert.credly_url }}" target="_blank" rel="noopener">Ver en Credly</a></p>
+        {% endif %}
+
+        {% if not row.cert %}
+          <div class="warning">Sin reporte</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if extras %}
+    <h3 style="margin-top:1.5rem">Certificaciones extra</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:.5rem">
+      {% for cert in extras %}
+        <div class="card">
+          {% if cert.course %}
+            <h4 style="margin:.2rem 0">{{ cert.course.nombre }}</h4>
+          {% else %}
+            <h4 style="margin:.2rem 0">—</h4>
+          {% endif %}
+
+          {% if cert.badge_src %}
+            <img src="{{ cert.badge_src }}" alt="Badge {% if cert.course %}{{ cert.course.nombre }}{% else %}—{% endif %}" style="max-width:140px;border-radius:10px"/>
+          {% elif cert.course and cert.course.imagen %}
+            <img src="{{ cert.course.imagen.url }}" alt="Imagen {% if cert.course %}{{ cert.course.nombre }}{% else %}—{% endif %}" style="max-width:140px;border-radius:10px"/>
+          {% endif %}
+
+          <p style="margin:.4rem 0">Fecha: {% if cert.issued_at %}{{ cert.issued_at|date:"Y-m-d" }}{% else %}—{% endif %}</p>
+
+          {% if cert.credly_url %}
+            <p style="margin:.4rem 0"><a href="{{ cert.credly_url }}" target="_blank" rel="noopener">Ver en Credly</a></p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: ciscocerts
+    env: python
+    runtime: python3
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn ciscocerts.wsgi:application --preload --workers=2 --threads=2 --timeout=120
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ciscocerts.onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ciscocerts-db
+          property: connectionString
+      # Optional: store uploaded badges on S3/R2
+      - key: USE_S3
+        value: "True"
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_STORAGE_BUCKET_NAME
+        sync: false
+      - key: AWS_S3_REGION_NAME
+        value: "us-east-1"
+      - key: AWS_S3_ENDPOINT_URL
+        value: ""
+    autoDeploy: true
+    healthCheckPath: "/"
+
+databases:
+  - name: ciscocerts-db
+    plan: free

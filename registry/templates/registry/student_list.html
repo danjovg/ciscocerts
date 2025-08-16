@@ -1,0 +1,84 @@
+{% extends 'registry/base.html' %}
+{% block title %}Certificados Cisco{% endblock %}
+
+{% block content %}
+
+  <div class="card" style="margin-top:.9rem">
+    <form id="searchForm" method="get" style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
+      <input id="qInput" type="text" name="q" placeholder="Buscar por nombre, apellido o email"
+             value="{{ q }}" style="flex:1;min-width:260px;padding:.6rem .7rem;border-radius:10px;border:1px solid #1f2937;background:#0b1020;color:#e5e7eb">
+      <input type="hidden" name="sort" id="sortHidden" value="{{ sort|default:'apellido' }}">
+      <button type="submit" style="padding:.6rem .9rem;border-radius:10px;border:1px solid #1f2937;background:#0b1020;color:#e5e7eb">
+        Buscar
+      </button>
+
+      <div class="toggle-wrap" style="margin-left:auto">
+        <span class="toggle-label">Ordenar por</span>
+        <label class="switch" title="Cambiar a ordenar por Apellido / Nombre">
+          <input id="sortToggle" type="checkbox" {% if sort == 'nombre' %}checked{% endif %}>
+          <span class="opt opt-left">Ape</span>
+          <span class="opt opt-right">Nom</span>
+          <span class="knob"></span>
+        </label>
+      </div>
+    </form>
+  </div>
+
+  <div class="card" style="margin-top:.9rem">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Sección</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          <tr>
+            <td>
+              {% if s.slug %}
+                {% if sort == "apellido" %}
+                  <a href="{% url 'registry:student-detail' slug=s.slug %}">{{ s.last_name }}, {{ s.first_name }}</a>
+                {% else %}
+                  <a href="{% url 'registry:student-detail' slug=s.slug %}">{{ s.first_name }} {{ s.last_name }}</a>
+                {% endif %}
+              {% else %}
+                {% if sort == "apellido" %}
+                  {{ s.last_name }}, {{ s.first_name }}
+                {% else %}
+                  {{ s.first_name }} {{ s.last_name }}
+                {% endif %}
+              {% endif %}
+            </td>
+            <td>{{ s.cohort }}</td>
+            <td>{% if s.has_required %}✅ Completo{% else %}⚠️ Incompleto{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">Sin resultados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p style="color:#9ca3af;margin-top:.6rem">
+      Requeridas:
+      {% if required_names %}{{ required_names|join:", " }}{% else %}{{ required|join:", " }}{% endif %}
+    </p>
+  </div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  (function(){
+    const toggle = document.getElementById('sortToggle');
+    const hidden = document.getElementById('sortHidden');
+    const form   = document.getElementById('searchForm');
+    toggle.checked = (hidden.value === 'nombre');
+    toggle.addEventListener('change', function(){
+      hidden.value = this.checked ? 'nombre' : 'apellido';
+      form.submit(); // conserva "q"
+    });
+  })();
+</script>
+{% endblock %}
